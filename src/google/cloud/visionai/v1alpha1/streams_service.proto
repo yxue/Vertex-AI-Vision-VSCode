@@ -1,0 +1,577 @@
+// Copyright 2022 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package google.cloud.visionai.v1alpha1;
+
+import "google/cloud/visionai/v1alpha1/common.proto";
+import "google/cloud/visionai/v1alpha1/streams_resources.proto";
+import "google/longrunning/operations.proto";
+import "google/protobuf/field_mask.proto";
+
+// Service describing handlers for resources.
+// Vision API and Vision AI API are two independent APIs developed by the same
+// team. Vision API is for people to annotate their image while Vision AI is an
+// e2e solution for customer to build their own computer vision application.
+service StreamsService {
+  // Lists Clusters in a given project and location.
+  rpc ListClusters(ListClustersRequest) returns (ListClustersResponse) {}
+
+  // Gets details of a single Cluster.
+  rpc GetCluster(GetClusterRequest) returns (Cluster) {}
+
+  // Creates a new Cluster in a given project and location.
+  rpc CreateCluster(CreateClusterRequest) returns (google.longrunning.Operation) {}
+
+  // Updates the parameters of a single Cluster.
+  rpc UpdateCluster(UpdateClusterRequest) returns (google.longrunning.Operation) {}
+
+  // Deletes a single Cluster.
+  rpc DeleteCluster(DeleteClusterRequest) returns (google.longrunning.Operation) {}
+
+  // Lists Streams in a given project and location.
+  rpc ListStreams(ListStreamsRequest) returns (ListStreamsResponse) {}
+
+  // Gets details of a single Stream.
+  rpc GetStream(GetStreamRequest) returns (Stream) {}
+
+  // Creates a new Stream in a given project and location.
+  rpc CreateStream(CreateStreamRequest) returns (google.longrunning.Operation) {}
+
+  // Updates the parameters of a single Stream.
+  rpc UpdateStream(UpdateStreamRequest) returns (google.longrunning.Operation) {}
+
+  // Deletes a single Stream.
+  rpc DeleteStream(DeleteStreamRequest) returns (google.longrunning.Operation) {}
+
+  // Gets the thumbnail (image snapshot) of a single Stream.
+  rpc GetStreamThumbnail(GetStreamThumbnailRequest) returns (google.longrunning.Operation) {}
+
+  // Lists Events in a given project and location.
+  rpc ListEvents(ListEventsRequest) returns (ListEventsResponse) {}
+
+  // Gets details of a single Event.
+  rpc GetEvent(GetEventRequest) returns (Event) {}
+
+  // Creates a new Event in a given project and location.
+  rpc CreateEvent(CreateEventRequest) returns (google.longrunning.Operation) {}
+
+  // Updates the parameters of a single Event.
+  rpc UpdateEvent(UpdateEventRequest) returns (google.longrunning.Operation) {}
+
+  // Deletes a single Event.
+  rpc DeleteEvent(DeleteEventRequest) returns (google.longrunning.Operation) {}
+
+  // Lists Series in a given project and location.
+  rpc ListSeries(ListSeriesRequest) returns (ListSeriesResponse) {}
+
+  // Gets details of a single Series.
+  rpc GetSeries(GetSeriesRequest) returns (Series) {}
+
+  // Creates a new Series in a given project and location.
+  rpc CreateSeries(CreateSeriesRequest) returns (google.longrunning.Operation) {}
+
+  // Updates the parameters of a single Event.
+  rpc UpdateSeries(UpdateSeriesRequest) returns (google.longrunning.Operation) {}
+
+  // Deletes a single Series.
+  rpc DeleteSeries(DeleteSeriesRequest) returns (google.longrunning.Operation) {}
+}
+
+// Message for requesting list of Clusters.
+message ListClustersRequest {
+  // Required. Parent value for ListClustersRequest.
+  string parent = 1;
+
+  // Requested page size. Server may return fewer items than requested.
+  // If unspecified, server will pick an appropriate default.
+  int32 page_size = 2;
+
+  // A token identifying a page of results the server should return.
+  string page_token = 3;
+
+  // Filtering results.
+  string filter = 4;
+
+  // Hint for how to order the results.
+  string order_by = 5;
+}
+
+// Message for response to listing Clusters.
+message ListClustersResponse {
+  // The list of Cluster.
+  repeated Cluster clusters = 1;
+
+  // A token identifying a page of results the server should return.
+  string next_page_token = 2;
+
+  // Locations that could not be reached.
+  repeated string unreachable = 3;
+}
+
+// Message for getting a Cluster.
+message GetClusterRequest {
+  // Required. Name of the resource.
+  string name = 1;
+}
+
+// Message for creating a Cluster.
+message CreateClusterRequest {
+  // Required. Value for parent.
+  string parent = 1;
+
+  // Required. Id of the requesting object.
+  string cluster_id = 2;
+
+  // Required. The resource being created.
+  Cluster cluster = 3;
+
+  // Optional. An optional request ID to identify requests. Specify a unique request ID
+  // so that if you must retry your request, the server will know to ignore
+  // the request if it has already been completed. The server will guarantee
+  // that for at least 60 minutes since the first request.
+  //
+  // For example, consider a situation where you make an initial request and the
+  // request times out. If you make the request again with the same request ID,
+  // the server can check if original operation with the same request ID was
+  // received, and if so, will ignore the second request. This prevents clients
+  // from accidentally creating duplicate commitments.
+  //
+  // The request ID must be a valid UUID with the exception that zero UUID is
+  // not supported (00000000-0000-0000-0000-000000000000).
+  string request_id = 4;
+}
+
+// Message for updating a Cluster.
+message UpdateClusterRequest {
+  // Required. Field mask is used to specify the fields to be overwritten in the
+  // Cluster resource by the update.
+  // The fields specified in the update_mask are relative to the resource, not
+  // the full request. A field will be overwritten if it is in the mask. If the
+  // user does not provide a mask then all fields will be overwritten.
+  google.protobuf.FieldMask update_mask = 1;
+
+  // Required. The resource being updated
+  Cluster cluster = 2;
+
+  // Optional. An optional request ID to identify requests. Specify a unique request ID
+  // so that if you must retry your request, the server will know to ignore
+  // the request if it has already been completed. The server will guarantee
+  // that for at least 60 minutes since the first request.
+  //
+  // For example, consider a situation where you make an initial request and the
+  // request times out. If you make the request again with the same request ID,
+  // the server can check if original operation with the same request ID was
+  // received, and if so, will ignore the second request. This prevents clients
+  // from accidentally creating duplicate commitments.
+  //
+  // The request ID must be a valid UUID with the exception that zero UUID is
+  // not supported (00000000-0000-0000-0000-000000000000).
+  string request_id = 3;
+}
+
+// Message for deleting a Cluster.
+message DeleteClusterRequest {
+  // Required. Name of the resource
+  string name = 1;
+
+  // Optional. An optional request ID to identify requests. Specify a unique request ID
+  // so that if you must retry your request, the server will know to ignore
+  // the request if it has already been completed. The server will guarantee
+  // that for at least 60 minutes after the first request.
+  //
+  // For example, consider a situation where you make an initial request and the
+  // request times out. If you make the request again with the same request ID,
+  // the server can check if original operation with the same request ID was
+  // received, and if so, will ignore the second request. This prevents clients
+  // from accidentally creating duplicate commitments.
+  //
+  // The request ID must be a valid UUID with the exception that zero UUID is
+  // not supported (00000000-0000-0000-0000-000000000000).
+  string request_id = 2;
+}
+
+// Message for requesting list of Streams.
+message ListStreamsRequest {
+  // Required. Parent value for ListStreamsRequest.
+  string parent = 1;
+
+  // Requested page size. Server may return fewer items than requested.
+  // If unspecified, server will pick an appropriate default.
+  int32 page_size = 2;
+
+  // A token identifying a page of results the server should return.
+  string page_token = 3;
+
+  // Filtering results.
+  string filter = 4;
+
+  // Hint for how to order the results.
+  string order_by = 5;
+}
+
+// Message for response to listing Streams.
+message ListStreamsResponse {
+  // The list of Stream.
+  repeated Stream streams = 1;
+
+  // A token identifying a page of results the server should return.
+  string next_page_token = 2;
+
+  // Locations that could not be reached.
+  repeated string unreachable = 3;
+}
+
+// Message for getting a Stream.
+message GetStreamRequest {
+  // Required. Name of the resource.
+  string name = 1;
+}
+
+// Message for creating a Stream.
+message CreateStreamRequest {
+  // Required. Value for parent.
+  string parent = 1;
+
+  // Required. Id of the requesting object.
+  string stream_id = 2;
+
+  // Required. The resource being created.
+  Stream stream = 3;
+
+  // Optional. An optional request ID to identify requests. Specify a unique request ID
+  // so that if you must retry your request, the server will know to ignore
+  // the request if it has already been completed. The server will guarantee
+  // that for at least 60 minutes since the first request.
+  //
+  // For example, consider a situation where you make an initial request and the
+  // request times out. If you make the request again with the same request ID,
+  // the server can check if original operation with the same request ID was
+  // received, and if so, will ignore the second request. This prevents clients
+  // from accidentally creating duplicate commitments.
+  //
+  // The request ID must be a valid UUID with the exception that zero UUID is
+  // not supported (00000000-0000-0000-0000-000000000000).
+  string request_id = 4;
+}
+
+// Message for updating a Stream.
+message UpdateStreamRequest {
+  // Required. Field mask is used to specify the fields to be overwritten in the
+  // Stream resource by the update.
+  // The fields specified in the update_mask are relative to the resource, not
+  // the full request. A field will be overwritten if it is in the mask. If the
+  // user does not provide a mask then all fields will be overwritten.
+  google.protobuf.FieldMask update_mask = 1;
+
+  // Required. The resource being updated.
+  Stream stream = 2;
+
+  // Optional. An optional request ID to identify requests. Specify a unique request ID
+  // so that if you must retry your request, the server will know to ignore
+  // the request if it has already been completed. The server will guarantee
+  // that for at least 60 minutes since the first request.
+  //
+  // For example, consider a situation where you make an initial request and the
+  // request times out. If you make the request again with the same request ID,
+  // the server can check if original operation with the same request ID was
+  // received, and if so, will ignore the second request. This prevents clients
+  // from accidentally creating duplicate commitments.
+  //
+  // The request ID must be a valid UUID with the exception that zero UUID is
+  // not supported (00000000-0000-0000-0000-000000000000).
+  string request_id = 3;
+}
+
+// Message for deleting a Stream.
+message DeleteStreamRequest {
+  // Required. Name of the resource.
+  string name = 1;
+
+  // Optional. An optional request ID to identify requests. Specify a unique request ID
+  // so that if you must retry your request, the server will know to ignore
+  // the request if it has already been completed. The server will guarantee
+  // that for at least 60 minutes after the first request.
+  //
+  // For example, consider a situation where you make an initial request and the
+  // request times out. If you make the request again with the same request ID,
+  // the server can check if original operation with the same request ID was
+  // received, and if so, will ignore the second request. This prevents clients
+  // from accidentally creating duplicate commitments.
+  //
+  // The request ID must be a valid UUID with the exception that zero UUID is
+  // not supported (00000000-0000-0000-0000-000000000000).
+  string request_id = 2 ;
+}
+
+// Message for getting the thumbnail of a Stream.
+message GetStreamThumbnailRequest {
+  // Required. The name of the stream for to get the thumbnail from.
+  string stream = 1;
+
+  // Required. The name of the GCS object to store the thumbnail image.
+  string gcs_object_name = 2;
+
+  // Optional. The name of the event. If unspecified, the thumbnail will be retrieved from
+  // the latest event.
+  string event = 3;
+
+  // Optional. An optional request ID to identify the requests. Specify a unique request
+  // ID so that if you must retry your request, the server will know to ignore
+  // the request if it has already been completed. The server will guarantee
+  // that for at least 60 minutes since the first request.
+  //
+  // For example, consider a situation where you make an initial request and the
+  // request times out. If you make the request again with the same request ID,
+  // the server can check if original operation with the same request ID was
+  // received, and if so, will ignore the second request. This prevents clients
+  // from accidentally creating duplicate commitments.
+  //
+  // The request ID must be a valid UUID with the exception that zero UUID is
+  // not supported (00000000-0000-0000-0000-000000000000).
+  string request_id = 4;
+}
+
+// Message for the response of GetStreamThumbnail. The empty response message
+// indicates the thumbnail image has been uploaded to GCS successfully.
+message GetStreamThumbnailResponse {
+
+}
+
+// Message for requesting list of Events.
+message ListEventsRequest {
+  // Required. Parent value for ListEventsRequest.
+  string parent = 1;
+
+  // Requested page size. Server may return fewer items than requested.
+  // If unspecified, server will pick an appropriate default.
+  int32 page_size = 2;
+
+  // A token identifying a page of results the server should return.
+  string page_token = 3;
+
+  // Filtering results.
+  string filter = 4;
+
+  // Hint for how to order the results.
+  string order_by = 5;
+}
+
+// Message for response to listing Events.
+message ListEventsResponse {
+  // The list of Event.
+  repeated Event events = 1;
+
+  // A token identifying a page of results the server should return.
+  string next_page_token = 2;
+
+  // Locations that could not be reached.
+  repeated string unreachable = 3;
+}
+
+// Message for getting a Event.
+message GetEventRequest {
+  // Required. Name of the resource.
+  string name = 1;
+}
+
+// Message for creating a Event.
+message CreateEventRequest {
+  // Required. Value for parent.
+  string parent = 1;
+
+  // Required. Id of the requesting object.
+  string event_id = 2;
+
+  // Required. The resource being created.
+  Event event = 3;
+
+  // Optional. An optional request ID to identify requests. Specify a unique request ID
+  // so that if you must retry your request, the server will know to ignore
+  // the request if it has already been completed. The server will guarantee
+  // that for at least 60 minutes since the first request.
+  //
+  // For example, consider a situation where you make an initial request and the
+  // request times out. If you make the request again with the same request ID,
+  // the server can check if original operation with the same request ID was
+  // received, and if so, will ignore the second request. This prevents clients
+  // from accidentally creating duplicate commitments.
+  //
+  // The request ID must be a valid UUID with the exception that zero UUID is
+  // not supported (00000000-0000-0000-0000-000000000000).
+  string request_id = 4;
+}
+
+// Message for updating a Event.
+message UpdateEventRequest {
+  // Required. Field mask is used to specify the fields to be overwritten in the
+  // Event resource by the update.
+  // The fields specified in the update_mask are relative to the resource, not
+  // the full request. A field will be overwritten if it is in the mask. If the
+  // user does not provide a mask then all fields will be overwritten.
+  google.protobuf.FieldMask update_mask = 1;
+
+  // Required. The resource being updated.
+  Event event = 2;
+
+  // Optional. An optional request ID to identify requests. Specify a unique request ID
+  // so that if you must retry your request, the server will know to ignore
+  // the request if it has already been completed. The server will guarantee
+  // that for at least 60 minutes since the first request.
+  //
+  // For example, consider a situation where you make an initial request and the
+  // request times out. If you make the request again with the same request ID,
+  // the server can check if original operation with the same request ID was
+  // received, and if so, will ignore the second request. This prevents clients
+  // from accidentally creating duplicate commitments.
+  //
+  // The request ID must be a valid UUID with the exception that zero UUID is
+  // not supported (00000000-0000-0000-0000-000000000000).
+  string request_id = 3;
+}
+
+// Message for deleting a Event.
+message DeleteEventRequest {
+  // Required. Name of the resource.
+  string name = 1;
+
+  // Optional. An optional request ID to identify requests. Specify a unique request ID
+  // so that if you must retry your request, the server will know to ignore
+  // the request if it has already been completed. The server will guarantee
+  // that for at least 60 minutes after the first request.
+  //
+  // For example, consider a situation where you make an initial request and the
+  // request times out. If you make the request again with the same request ID,
+  // the server can check if original operation with the same request ID was
+  // received, and if so, will ignore the second request. This prevents clients
+  // from accidentally creating duplicate commitments.
+  //
+  // The request ID must be a valid UUID with the exception that zero UUID is
+  // not supported (00000000-0000-0000-0000-000000000000).
+  string request_id = 2;
+}
+
+// Message for requesting list of Series.
+message ListSeriesRequest {
+  // Required. Parent value for ListSeriesRequest.
+  string parent = 1;
+
+  // Requested page size. Server may return fewer items than requested.
+  // If unspecified, server will pick an appropriate default.
+  int32 page_size = 2;
+
+  // A token identifying a page of results the server should return.
+  string page_token = 3;
+
+  // Filtering results.
+  string filter = 4;
+
+  // Hint for how to order the results.
+  string order_by = 5;
+}
+
+// Message for response to listing Series.
+message ListSeriesResponse {
+  // The list of Series.
+  repeated Series series = 1;
+
+  // A token identifying a page of results the server should return.
+  string next_page_token = 2;
+
+  // Locations that could not be reached.
+  repeated string unreachable = 3;
+}
+
+// Message for getting a Series.
+message GetSeriesRequest {
+  // Required. Name of the resource.
+  string name = 1;
+}
+
+// Message for creating a Series.
+message CreateSeriesRequest {
+  // Required. Value for parent.
+  string parent = 1;
+
+  // Required. Id of the requesting object.
+  string series_id = 2;
+
+  // Required. The resource being created.
+  Series series = 3;
+
+  // Optional. An optional request ID to identify requests. Specify a unique request ID
+  // so that if you must retry your request, the server will know to ignore
+  // the request if it has already been completed. The server will guarantee
+  // that for at least 60 minutes since the first request.
+  //
+  // For example, consider a situation where you make an initial request and the
+  // request times out. If you make the request again with the same request ID,
+  // the server can check if original operation with the same request ID was
+  // received, and if so, will ignore the second request. This prevents clients
+  // from accidentally creating duplicate commitments.
+  //
+  // The request ID must be a valid UUID with the exception that zero UUID is
+  // not supported (00000000-0000-0000-0000-000000000000).
+  string request_id = 4;
+}
+
+// Message for updating a Series.
+message UpdateSeriesRequest {
+  // Required. Field mask is used to specify the fields to be overwritten in the Series
+  // resource by the update. The fields specified in the update_mask are
+  // relative to the resource, not the full request. A field will be overwritten
+  // if it is in the mask. If the user does not provide a mask then all fields
+  // will be overwritten.
+  google.protobuf.FieldMask update_mask = 1;
+
+  // Required. The resource being updated
+  Series series = 2;
+
+  // Optional. An optional request ID to identify requests. Specify a unique request ID
+  // so that if you must retry your request, the server will know to ignore
+  // the request if it has already been completed. The server will guarantee
+  // that for at least 60 minutes since the first request.
+  //
+  // For example, consider a situation where you make an initial request and the
+  // request times out. If you make the request again with the same request ID,
+  // the server can check if original operation with the same request ID was
+  // received, and if so, will ignore the second request. This prevents clients
+  // from accidentally creating duplicate commitments.
+  //
+  // The request ID must be a valid UUID with the exception that zero UUID is
+  // not supported (00000000-0000-0000-0000-000000000000).
+  string request_id = 3;
+}
+
+// Message for deleting a Series.
+message DeleteSeriesRequest {
+  // Required. Name of the resource.
+  string name = 1;
+
+  // Optional. An optional request ID to identify requests. Specify a unique request ID
+  // so that if you must retry your request, the server will know to ignore
+  // the request if it has already been completed. The server will guarantee
+  // that for at least 60 minutes after the first request.
+  //
+  // For example, consider a situation where you make an initial request and the
+  // request times out. If you make the request again with the same request ID,
+  // the server can check if original operation with the same request ID was
+  // received, and if so, will ignore the second request. This prevents clients
+  // from accidentally creating duplicate commitments.
+  //
+  // The request ID must be a valid UUID with the exception that zero UUID is
+  // not supported (00000000-0000-0000-0000-000000000000).
+  string request_id = 2;
+}
