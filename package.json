@@ -34,8 +34,30 @@
       {
         "command": "vertex-ai-vision-vscode.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "vertex-ai-vision-vscode.describe",
+        "title": "Describe"
+      },
+      {
+        "command": "vertex-ai-vision-vscode.delete",
+        "title": "Delete"
       }
     ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "vertex-ai-vision-vscode.describe",
+          "when": "view == vertexAIVision && viewItem == stream || viewItem == analysis",
+          "group": "inline"
+        },
+        {
+          "command": "vertex-ai-vision-vscode.delete",
+          "when": "view == vertexAIVision && viewItem == stream || viewItem == analysis",
+          "group": "inline"
+        }
+      ]
+    },
     "views": {
       "explorer": [
         {

@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-import { TreeViewDataProvider } from './treeViewDataProvider';
+import { TreeItem, TreeViewDataProvider } from './treeViewDataProvider';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -19,6 +19,24 @@ export function activate(context: vscode.ExtensionContext) {
 	} else {
 		const treeViewDataProvider = new TreeViewDataProvider('projects/' + project + '/locations/' + config.get('visionai.location'));
 		vscode.window.registerTreeDataProvider('vertexAIVision', treeViewDataProvider);
+
+		vscode.commands.registerCommand('vertex-ai-vision-vscode.describe', async () => {
+			var doc = await vscode.workspace.openTextDocument({
+				content: "aaaaaaaaaaaaaaaa",
+				language: "json",
+			});
+			await vscode.window.showTextDocument(doc, { preview: true, preserveFocus: false });
+			vscode.window.showInformationMessage("aaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+		});
+
+		vscode.commands.registerCommand('vertex-ai-vision-vscode.delete', async (item: TreeItem) => {
+			var op = await treeViewDataProvider.deleteStream(item.name);
+			if (op.hasError()) {
+				vscode.window.showErrorMessage('Failed to delete ' + item.type + '"' + item.label + '". Error: \n' + op.getError());
+			} else {
+				vscode.window.showInformationMessage('Deleted ' + item.type + ' "' + item.label + '" successfully!');
+			}
+		});
 	}
 
 	// The command has been defined in the package.json file

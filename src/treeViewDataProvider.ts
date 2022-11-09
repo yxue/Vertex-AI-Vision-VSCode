@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { VisionAIClient } from './client';
+import { Operation } from './google/longrunning/operations_pb';
 
 export class TreeViewDataProvider implements vscode.TreeDataProvider<TreeItem>{
     constructor(public readonly parent: string) { }
@@ -34,6 +35,8 @@ export class TreeViewDataProvider implements vscode.TreeDataProvider<TreeItem>{
                 var analyses = await this.listAnalyses(element.name);
                 element.children.push(...analyses);
                 break;
+            case 'stream':
+                break;
         }
         return element;
     }
@@ -56,10 +59,15 @@ export class TreeViewDataProvider implements vscode.TreeDataProvider<TreeItem>{
         return analyses.sort((lhs, rhs) => lhs.name < rhs.name ? -1 : 1).map(a => new TreeItem(a.label, a.name, 'analysis'));
     }
 
+    async deleteStream(name: string): Promise<Operation> {
+        await this.client.initialize();
+        return this.client.deleteStream(name);
+    }
+
     client = new VisionAIClient('visionai.googleapis.com');
 }
 
-class TreeItem extends vscode.TreeItem {
+export class TreeItem extends vscode.TreeItem {
     children: TreeItem[] | undefined;
 
     constructor(
@@ -70,5 +78,6 @@ class TreeItem extends vscode.TreeItem {
         this.name = name;
         this.type = type;
         this.children = children;
+        this.contextValue = type;
     }
 }
