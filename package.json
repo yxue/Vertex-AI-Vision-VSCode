@@ -42,6 +42,18 @@
       {
         "command": "vertex-ai-vision-vscode.delete",
         "title": "Delete"
+      },
+      {
+        "command": "vertex-ai-vision-vscode.newstream",
+        "title": "New Stream"
+      },
+      {
+        "command": "vertex-ai-vision-vscode.createanalysis",
+        "title": "Create Analysis"
+      },
+      {
+        "command": "vertex-ai-vision-vscode.submitstream",
+        "title": "Submit Stream"
       }
     ],
     "menus": {

@@ -3,14 +3,16 @@ import { GoogleAuth } from "google-auth-library";
 import { IStreamsServiceClient } from "./google/cloud/visionai/v1alpha1/streams_service_grpc_pb";
 import { Analysis, Cluster, Stream } from "./resources";
 import * as util from 'util';
-import { DeleteStreamRequest, ListClustersRequest, ListClustersResponse, ListStreamsRequest, ListStreamsResponse } from "./google/cloud/visionai/v1alpha1/streams_service_pb";
-import { ListAnalysesRequest, ListAnalysesResponse } from "./google/cloud/visionai/v1alpha1/lva_service_pb";
+import { CreateStreamRequest, DeleteStreamRequest, ListClustersRequest, ListClustersResponse, ListStreamsRequest, ListStreamsResponse } from "./google/cloud/visionai/v1alpha1/streams_service_pb";
+import { DeleteAnalysisRequest, ListAnalysesRequest, ListAnalysesResponse } from "./google/cloud/visionai/v1alpha1/lva_service_pb";
 import { ILiveVideoAnalyticsClient } from "./google/cloud/visionai/v1alpha1/lva_service_grpc_pb";
 import { IOperationsClient } from "./google/longrunning/operations_grpc_pb";
 import { GetOperationRequest, Operation, WaitOperationRequest } from "./google/longrunning/operations_pb";
 import { Duration } from "google-protobuf/google/protobuf/duration_pb";
+import { Stream as StreamResource } from './google/cloud/visionai/v1alpha1/streams_resources_pb';
 
 var messages = require('../src/google/cloud/visionai/v1alpha1/streams_service_pb');
+var resources = require('../src/google/cloud/visionai/v1alpha1/streams_resources_pb');
 var services = require('../src/google/cloud/visionai/v1alpha1/streams_service_grpc_pb');
 var lvaMessages = require('../src/google/cloud/visionai/v1alpha1/lva_service_pb');
 var lvaServices = require('../src/google/cloud/visionai/v1alpha1/lva_service_grpc_pb');
@@ -37,6 +39,20 @@ export class VisionAIClient {
     private async grpcCredentials(): Promise<ChannelCredentials> {
         var auth = await this.auth.getApplicationDefault();
         return credentials.combineChannelCredentials(credentials.createSsl(), credentials.createFromGoogleCredential(auth.credential));
+    }
+
+    private getParent(name: string): string {
+        var tokens = name.split('/');
+        var parent = new Array<string>;
+        for (var i = 0; i < tokens.length - 2; ++i) {
+            parent.push(tokens[i]);
+        }
+        return parent.join('/');
+    }
+
+    private getId(name: string): string {
+        var tokens = name.split('/');
+        return tokens[tokens.length - 1];
     }
 
     async listClusters(parent: string): Promise<Cluster[]> {
@@ -102,7 +118,6 @@ export class VisionAIClient {
     async deleteStream(name: string): Promise<Operation> {
         var request = new messages.DeleteStreamRequest();
         var meta = new grpc.Metadata();
-        // TODO: check.
         meta.add('x-goog-request-params', 'parent=' + name);
         request.setName(name);
         var deleteStreamPromise = util.promisify(
@@ -115,9 +130,44 @@ export class VisionAIClient {
         return this.waitForOperation(operation);
     }
 
+    async deleteAnalysis(name: string): Promise<Operation> {
+        var request = new lvaMessages.DeleteAnalysisRequest();
+        var meta = new grpc.Metadata();
+        meta.add('x-goog-request-params', 'parent=' + name);
+        request.setName(name);
+        var deleteAnalysisPromise = util.promisify(
+            (
+                req: DeleteAnalysisRequest,
+                meta: Metadata,
+                cb: (error: ServiceError | null, response: Operation) => void) =>
+                this.lvaClient?.deleteAnalysis(req, meta, (err, res) => cb(err, res)));
+        var operation = await deleteAnalysisPromise(request, meta);
+        return this.waitForOperation(operation);
+    }
+
+    async createStream(stream: Stream): Promise<Operation> {
+        var request = new messages.CreateStreamRequest();
+        var meta = new grpc.Metadata();
+        meta.add('x-goog-request-params', 'parent=' + this.getParent(stream.name));
+        var s = new resources.Stream();
+        s.setEnableHlsPlayback(stream.enableHLS);
+        s.setDisplayName(stream.displayName);
+        s.setMediaWarehouseAsset(stream.mwhAsset);
+        request.setStream(s);
+        request.setParent(this.getParent(stream.name));
+        request.setStreamId(this.getId(stream.name));
+        var createStreamPromise = util.promisify((
+            req: CreateStreamRequest,
+            meta: Metadata,
+            cb: (error: ServiceError | null, response: Operation) => void) =>
+            this.client?.createStream(req, meta, (err, res) => cb(err, res)));
+        var operation = await createStreamPromise(request, meta);
+        return this.waitForOperation(operation);
+    }
+
     async waitForOperation(op: Operation): Promise<Operation> {
         const callWithRetry: (d: number) => Promise<Operation> = async (depth: number) => {
-            if (depth > 2) {
+            if (depth > 5) {
                 return op;
             }
             var getPromise = util.promisify(

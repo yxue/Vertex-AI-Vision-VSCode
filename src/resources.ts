@@ -7,6 +7,7 @@ export class Stream {
         var ids = name.split('/');
         this.label = ids[ids.length - 1];
     }
+
     public readonly label: string;
 }
 

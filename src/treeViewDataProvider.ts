@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { VisionAIClient } from './client';
 import { Operation } from './google/longrunning/operations_pb';
+import { Stream } from './resources';
 
 export class TreeViewDataProvider implements vscode.TreeDataProvider<TreeItem>{
     constructor(public readonly parent: string) { }
@@ -62,6 +63,16 @@ export class TreeViewDataProvider implements vscode.TreeDataProvider<TreeItem>{
     async deleteStream(name: string): Promise<Operation> {
         await this.client.initialize();
         return this.client.deleteStream(name);
+    }
+
+    async deleteAnlysis(name: string): Promise<Operation> {
+        await this.client.initialize();
+        return this.client.deleteAnalysis(name);
+    }
+
+    async createStream(stream: any): Promise<Operation> {
+        await this.client.initialize();
+        return this.client.createStream(new Stream(stream.name, stream.displayName, stream.mediaWarehouseAsset, stream.enableHlsPlayback));
     }
 
     client = new VisionAIClient('visionai.googleapis.com');
